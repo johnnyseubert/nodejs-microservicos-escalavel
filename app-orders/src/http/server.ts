@@ -7,9 +7,9 @@ import {
    type ZodTypeProvider,
 } from 'fastify-type-provider-zod';
 
-import { channels } from '../broker/channels/index.ts';
-import { db } from '../db/client.ts';
+import { dispatchOrderCreated } from '../broker/messages/order-created.ts';
 import { schema } from '../db/schema/index.ts';
+import { db } from '../db/client.ts';
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 app.setValidatorCompiler(validatorCompiler);
@@ -23,7 +23,7 @@ app.post(
    async (request, reply) => {
       const { amount } = request.body;
 
-      const response = await db
+      const [order] = await db
          .insert(schema.orders)
          .values({
             id: crypto.randomUUID(),
@@ -32,10 +32,11 @@ app.post(
          })
          .returning();
 
-      channels.ordersChannel.sendToQueue(
-         'orders',
-         Buffer.from(JSON.stringify(response))
-      );
+      dispatchOrderCreated({
+         orderId: order.id,
+         amount: order.amount,
+         customer: { id: order.customerId },
+      });
 
       return reply.status(201).send({
          message: `Order created successfully with amount: ${amount}`,
