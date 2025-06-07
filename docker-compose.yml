@@ -12,5 +12,14 @@ services:
       volumes:
          - rabbitmq_data:/var/lib/rabbitmq
 
+   jeager:
+      image: jaegertracing/all-in-one:1.57
+      ports:
+         - '16686:16686' # Jaeger UI
+         - '6831:6831/udp' # Traces UDP
+         - '14268:14268' # Traces HTTP
+         - '4317:4317' # gRPC endpoint
+         - '4318:4318' # Http endpoint
+
 volumes:
    rabbitmq_data:
