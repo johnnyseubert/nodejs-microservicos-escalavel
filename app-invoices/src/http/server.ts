@@ -13,7 +13,7 @@ app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 app.register(fastifyCors, { origin: '*' });
 
-app.get('/health', () => 'OK');
+app.get('/health', () => '[Invoices] Alive');
 
 app.listen({ host: '0.0.0.0', port: 3334 }).then(() => {
    console.log('[Invoices] Server is running on port 3334');

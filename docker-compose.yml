@@ -21,5 +21,23 @@ services:
          - '4317:4317' # gRPC endpoint
          - '4318:4318' # Http endpoint
 
+   kong-api-gateway:
+      image: kong:3.9
+      environment:
+         KONG_DATABASE: off
+         KONG_ADMIN_LISTEN: '0.0.0.0:8001'
+         KONG_ADMIN_GUI_URL: 'http://localhost:8002'
+         KONG_DECLARATIVE_CONFIG: '/kong/config.yml'
+      extra_hosts:
+         - 'host.docker.internal:host-gateway' # localhost pra ele é meu pc agora nao o localhost dentro do container
+      volumes:
+         - './docker/kong/config.yml:/kong/config.yml'
+      ports:
+         - '8000:8000' # Proxy (API)
+         - '8001:8001' # Admin API
+         - '8002:8002' # UI Admin
+         - '8443:8443' # Proxy (API) HTTPS
+         - '8444:8444' # (API) Admin HTTPS
+
 volumes:
    rabbitmq_data:

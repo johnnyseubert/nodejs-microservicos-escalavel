@@ -17,7 +17,7 @@ app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 app.register(fastifyCors, { origin: '*' });
 
-app.get('/health', () => 'OK');
+app.get('/health', () => '[Orders] Alive');
 app.post(
    '/orders',
    { schema: { body: z.object({ amount: z.number().min(0) }) } },
